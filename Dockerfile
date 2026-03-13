@@ -1,7 +1,7 @@
 FROM php:8.3-apache
 
-# Disable ALL MPM modules first
-RUN a2dismod mpm_prefork mpm_worker mpm_event 2>/dev/null || true
+# Remove conflicting MPM modules from mods-enabled
+RUN rm -f /etc/apache2/mods-enabled/mpm_*.load /etc/apache2/mods-enabled/mpm_*.conf
 
 # Enable only prefork
 RUN a2enmod mpm_prefork
