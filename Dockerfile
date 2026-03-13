@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
  && docker-php-ext-install pdo pdo_mysql mysqli curl \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-ENV PORT=8080
+ENV PORT=80
 RUN sed -i 's/80/${PORT}/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
 
 COPY . /var/www/html/
