@@ -1,10 +1,16 @@
 FROM php:8.3-apache
 
-# Remove conflicting MPM modules from mods-enabled
-RUN rm -f /etc/apache2/mods-enabled/mpm_*.load /etc/apache2/mods-enabled/mpm_*.conf
+# Completely disable all MPM modules by removing them from the filesystem
+RUN rm -f /etc/apache2/mods-available/mpm_*.load && \
+    rm -f /etc/apache2/mods-available/mpm_*.conf && \
+    rm -f /etc/apache2/mods-enabled/mpm_*.load && \
+    rm -f /etc/apache2/mods-enabled/mpm_*.conf
 
-# Enable only prefork
-RUN a2enmod mpm_prefork
+# Create mpm_prefork module files manually
+RUN echo "LoadModule mpm_prefork_module modules/mod_mpm_prefork.so" > /etc/apache2/mods-available/mpm_prefork.load && \
+    echo "" > /etc/apache2/mods-available/mpm_prefork.conf && \
+    ln -s /etc/apache2/mods-available/mpm_prefork.load /etc/apache2/mods-enabled/mpm_prefork.load && \
+    ln -s /etc/apache2/mods-available/mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf
 
 RUN apt-get update && apt-get install -y \
  libcurl4-openssl-dev \
